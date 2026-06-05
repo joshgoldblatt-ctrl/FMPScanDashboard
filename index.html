@@ -1,11 +1,23 @@
 <!--
 ================================================================================
-  Version:      1.0
+  App:          LaGuardia FMP Scan Dashboard
+  Version:      1.2
   Released:     June 5, 2026
   Developed by: Josh Goldblatt using Claude
 ================================================================================
   CHANGELOG (most recent first)
 --------------------------------------------------------------------------------
+  v1.2  2026-06-05
+    - Renamed "experiences" wording to "career/experiential experiences"
+      throughout the UI: dashboard stat card, experience-type chart title,
+      Listing Type filter option, experience-type filter label, card pill
+      label, and per-department counts in the Content Viewer
+  v1.1  2026-06-05
+    - Removed subtitle description from the header
+    - Fixed alignment of the App/Version/Released/Developed by metadata block
+      (now a two-column grid with right-aligned labels)
+    - Filter bar in the Content Viewer no longer sticks to the top while
+      scrolling; it scrolls with the page so content is not obscured
   v1.0  2026-06-05
     - Initial release
     - Embedded data from 11 department FMP scan spreadsheets (Activities &
@@ -36,7 +48,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaGuardia FMP Scan Dashboard 1.0</title>
+<title>LaGuardia FMP Scan Dashboard 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
@@ -71,9 +83,9 @@ header{padding:38px 0 0}
 h1{font-family:var(--font-display);font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1.05;letter-spacing:-.5px}
 h1 .accent{color:var(--accent)}
 .subtitle{color:var(--ink-soft);margin-top:8px;max-width:620px}
-.meta-box{font-size:12.5px;color:var(--ink-soft);text-align:right;line-height:1.7;white-space:nowrap}
-.meta-box b{color:var(--ink);font-weight:600;display:inline-block;min-width:96px;text-align:left}
-.meta-box .row{display:flex;gap:8px;justify-content:flex-end}
+.meta-box{font-size:12.5px;color:var(--ink-soft);line-height:1.7;display:grid;grid-template-columns:auto auto;gap:0 10px;align-content:end}
+.meta-box b{color:var(--ink);font-weight:600;text-align:right}
+.meta-box span{white-space:nowrap}
 
 /* ---------- Tabs ---------- */
 .tabs{display:flex;gap:6px;margin:26px 0 30px}
@@ -96,7 +108,7 @@ h1 .accent{color:var(--accent)}
 .panel h2{font-family:var(--font-display);font-size:21px;font-weight:600;margin-bottom:4px}
 .panel .note{font-size:13px;color:var(--ink-faint);margin-bottom:18px}
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-@media(max-width:860px){.chart-grid{grid-template-columns:1fr}.meta-box{text-align:left}.meta-box .row{justify-content:flex-start}}
+@media(max-width:860px){.chart-grid{grid-template-columns:1fr}}
 
 .bar-row{display:grid;grid-template-columns:minmax(140px,42%) 1fr 52px;align-items:center;gap:12px;
   padding:6px 8px;margin:0 -8px;border-radius:8px;cursor:pointer;transition:background .15s}
@@ -115,7 +127,7 @@ h1 .accent{color:var(--accent)}
 
 /* ---------- Viewer ---------- */
 .filterbar{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
-  padding:18px 20px;margin-bottom:22px;position:sticky;top:10px;z-index:30}
+  padding:18px 20px;margin-bottom:22px}
 .filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px}
 .f-group label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-bottom:4px}
 .f-group select,.f-group input{width:100%;font-family:var(--font-body);font-size:13.5px;padding:7px 9px;
@@ -172,13 +184,12 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font-si
   <div class="brand-row">
     <div>
       <h1>LaGuardia <span class="accent">FMP Scan</span> Dashboard</h1>
-      <div class="subtitle">Activities, events, internships, research &amp; career experiences reported by departments, in one browsable place.</div>
     </div>
     <div class="meta-box">
-      <div class="row"><b>App:</b><span>LaGuardia FMP Scan Dashboard</span></div>
-      <div class="row"><b>Version:</b><span>1.0</span></div>
-      <div class="row"><b>Released:</b><span>June 5, 2026</span></div>
-      <div class="row"><b>Developed by:</b><span>Josh Goldblatt using Claude</span></div>
+      <b>App:</b><span>LaGuardia FMP Scan Dashboard</span>
+      <b>Version:</b><span>1.2</span>
+      <b>Released:</b><span>June 5, 2026</span>
+      <b>Developed by:</b><span>Josh Goldblatt using Claude</span>
     </div>
   </div>
   <nav class="tabs">
@@ -209,7 +220,7 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font-si
       <div id="actTypeChart"></div>
     </div>
     <div class="panel">
-      <h2>By Type of Experience</h2>
+      <h2>By Type of Career/Experiential Experience</h2>
       <div class="note">Internships, Research &amp; Career Experiences tab</div>
       <div id="expTypeChart"></div>
     </div>
@@ -231,10 +242,10 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font-si
   <div class="filterbar">
     <div class="filter-grid">
       <div class="f-group"><label>Listing Type</label>
-        <select id="fTab"><option value="">All listings</option><option value="activity">Activities &amp; Events</option><option value="experience">Internships / Experiences</option></select></div>
+        <select id="fTab"><option value="">All listings</option><option value="activity">Activities &amp; Events</option><option value="experience">Career/Experiential Experiences</option></select></div>
       <div class="f-group"><label>Department</label><select id="fDept"><option value="">All departments</option></select></div>
       <div class="f-group"><label>Type of Activity</label><select id="fActType"><option value="">All activity types</option></select></div>
-      <div class="f-group"><label>Type of Experience</label><select id="fExpType"><option value="">All experience types</option></select></div>
+      <div class="f-group"><label>Type of Career/Experiential Experience</label><select id="fExpType"><option value="">All experience types</option></select></div>
       <div class="f-group"><label>Program-Specific</label><select id="fScope"><option value="">All scopes</option></select></div>
       <div class="f-group"><label>Target Audience</label><select id="fAud"><option value="">All audiences</option></select></div>
       <div class="f-group"><label>Domain</label><select id="fDom"><option value="">All domains</option></select></div>
@@ -281,7 +292,7 @@ function buildStats(){
   document.getElementById('statGrid').innerHTML = `
     <div class="stat ink"><div class="num">${DATA.length}</div><div class="lbl">Total Listings</div></div>
     <div class="stat"><div class="num">${ACT.length}</div><div class="lbl">Activities &amp; Events</div></div>
-    <div class="stat teal"><div class="num">${EXP.length}</div><div class="lbl">Internships &amp; Experiences</div></div>
+    <div class="stat teal"><div class="num">${EXP.length}</div><div class="lbl">Career/Experiential Experiences</div></div>
     <div class="stat gold"><div class="num">${depts}</div><div class="lbl">Departments</div></div>`;
 }
 function barRows(el, entries, colorClass, onClick){
@@ -383,7 +394,7 @@ function detail(label, value, chips){
 function cardHTML(r){
   const isA = r.tab==='activity';
   const pills = [
-    `<span class="pill ${isA?'kind-a':'kind-e'}">${isA?'Activity / Event':'Experience'}</span>`,
+    `<span class="pill ${isA?'kind-a':'kind-e'}">${isA?'Activity / Event':'Career/Experiential Experience'}</span>`,
     r.type?`<span class="pill type">${esc(r.type)}</span>`:'<span class="pill type">No type listed</span>',
     r.program?`<span class="pill prog">${esc(r.program)}</span>`:''
   ].join('');
@@ -434,7 +445,7 @@ function applyFilters(){
     const a = dr.filter(r=>r.tab==='activity').length, e = dr.filter(r=>r.tab==='experience').length;
     const parts = [];
     if(a) parts.push(`${a} activit${a===1?'y':'ies'}`);
-    if(e) parts.push(`${e} experience${e===1?'':'s'}`);
+    if(e) parts.push(`${e} career/experiential experience${e===1?'':'s'}`);
     return `<div class="dept-section${openClass}">
       <div class="dept-head" onclick="this.parentElement.classList.toggle('open')">
         <span class="chev">&#9654;</span><h3>${esc(d)}</h3>
